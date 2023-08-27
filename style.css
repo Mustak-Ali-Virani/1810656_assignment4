@@ -1,0 +1,28 @@
+body {
+	background-image: url("cloud.jpg");
+	}
+
+
+.city-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+.forecast-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+
+.date {
+            font-weight: bold;
+        }
+
+.temperature {
+            color: #007BFF;
+        }
+
+.description {
+            color: #555;
+        }

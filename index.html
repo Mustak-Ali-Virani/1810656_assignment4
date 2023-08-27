@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Day Weather Forecast</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>5-Day Weather Forecast</h1>
+	  <div>
+        <label for="cityInput">Enter city names (comma-separated):</label>
+        <input type="text" id="cityInput">
+        <button id="fetchButton">Fetch Weather</button>
+    </div>
+    <div id="weather-container">
+        <!-- Weather data will be displayed here -->
+    </div>
+
+    <script>
+        const cities = [
+            { name: 'London', id: 2643743 },
+            { name: 'New York', id: 5128581 },
+            { name: 'Dhaka', id: 1185241 },
+            { name: 'Mumbai', id: 1275339 },
+            { name: 'Colombo', id: 1248991 }
+        ];
+        const apiKey = '8429a13daff5ce09042539393efb27d2';
+
+        async function fetchWeatherData(city) {
+            const url = `https://api.openweathermap.org/data/2.5/forecast?id=${city.id}&units=metric&appid=${apiKey}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return data;
+        }
+
+ 			async function displayWeatherData(cityNames) {
+            	const weatherContainer = document.getElementById('weather-container');
+            	weatherContainer.innerHTML = '';
+            
+            for (const city of cities) {
+                const weatherData = await fetchWeatherData(city);
+                
+                const cityName = city.name;
+                const forecastList = weatherData.list;
+
+                const cityContainer = document.createElement('div');
+                cityContainer.classList.add('city-container');
+                
+                const cityHeader = document.createElement('h2');
+                cityHeader.textContent = cityName;
+                cityContainer.appendChild(cityHeader);
+
+                const forecastContainer = document.createElement('div');
+                forecastContainer.classList.add('forecast-container');
+
+                forecastList.forEach(forecast => {
+                    const forecastItem = document.createElement('div');
+                    forecastItem.classList.add('forecast-item');
+                    
+                    const date = new Date(forecast.dt * 1000);
+                    const dateString = date.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+                    const temperature = `${forecast.main.temp.toFixed(1)}°C`;
+                    const description = forecast.weather[0].description;
+
+                    forecastItem.innerHTML = `
+                        <p class="date">${dateString}</p>
+                        <p class="temperature">${temperature}</p>
+                        <p class="description">${description}</p>
+                    `;
+
+                    forecastContainer.appendChild(forecastItem);
+                });
+
+                cityContainer.appendChild(forecastContainer);
+                weatherContainer.appendChild(cityContainer);
+            }
+        }
+
+        document.getElementById('fetchButton').addEventListener('click', () => {
+            const cityInput = document.getElementById('cityInput').value;
+            const cityNames = cityInput.split(',').map(name => name.trim());
+            displayWeatherData(cityNames);
+        });
+    </script>
+
+</body>
+</html>
